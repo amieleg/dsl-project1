@@ -1,10 +1,10 @@
-bouldering_wall "garbanzo" {
+bouldering_wall garbanzo {
     volumes [ volume ], 
     routes [
         bouldering_route route1 {
             grade: hoi,
             grid_base_point { x: 133 , y: 14 },
-            holds [ borp ]
+            holds [ borp ] 
         }
     ]
 }

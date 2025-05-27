@@ -16,8 +16,12 @@ import labour::Syntax;
  * Map regular CST arguments (e.g., *, +, ?) to lists
  * Map lexical nodes to Rascal primitive types (bool, int, str)
  */
+//BoulderingWall loadBoulderingWall((BoulderingWall)`bouldering_wall <Id label> { volumes [ <{Volume ","}* volumes> ]}`)
+// = \bouldering_wall("<label>", [loadVolume(volume) | volume <- volumes]);
 
-BoulderingWall loadBoulderingWall((BoulderingWall)`"bouldering_wall" <Id label> " "[ <{Volume ","}* volumes> ]`)
- = \bouldering_wall("<label>", [loadVolume(volume) | volume <- volumes], [loadRoute(route) | route <- routes]);
+BoulderingWall loadBoulderingWall((BoulderingWall)`bouldering_wall <Id label> { volumes [ <{Volume ","}* volumes> ] }`)
+ = \bouldering_wall("<label>", [loadVolume(volume) | volume <- volumes]);
 
-Volume loadVolume((Volume)`"volume"`) = \volume();
+Volume loadVolume((Volume)`volume`) = \volume();
+
+

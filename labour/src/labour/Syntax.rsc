@@ -15,37 +15,9 @@ extend lang::std::Id;
 lexical UnsignedInt = [0] | ([1-9][0-9]*); 
 
 start syntax BoulderingWall = 
-    boulderingwall: "bouldering_wall" "\"" Id name "\"" "{" 
-        "volumes"  "[" Volume ("," Volume)* "]" "," "routes " "[" Route ("," Route)* "]"
-    "}"  // volumes come first, then routes
- ; 
+    bouldering_wall: "bouldering_wall" Id name "{" "volumes" "[" {Volume ","}* "]" "}" 
+;
 
 syntax Volume =
     volume: "volume"
 ;
-
-syntax Route =
-    route: "bouldering_route" Id name "{"
-        "grade: " Id grade ","
-        "grid_base_point " Point2D ","
-        "holds [" Id hold ("," Id holds)* "]"
-    "}"
-;
-
-syntax Point2D = 
-    "{" X "," Y "}"
-;
-
-syntax X =
-    "x:" UnsignedInt x
-;
-
-syntax Y =
-    "y:" UnsignedInt y
-;
-
-syntax Z = 
-    "z:" UnsignedInt z
-;
-
-

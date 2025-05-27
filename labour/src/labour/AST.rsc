@@ -5,18 +5,12 @@ module labour::AST
  * - Hint: make sure there is an almost one-to-one correspondence with the grammar in Syntax.rsc
  */
 
-data BoulderingWall(loc src=|unknown:///|)
-  = \bouldering_wall(str name, list[Volume], list[Route])  // Add definition
-  ;
+data BoulderingWall
+ = \boulderingwall(str name, list[Volume] volumes)
+ ;
 
-data Volume(loc src=|unknown:///|)
-  = \volume()
-  ;
+data Volume = \volume();
 
-data Route(loc src=|unknown:///|)
-  = \route(str name, str grade, list[str] holds)
-  ;
 
-data Point2D(loc src=|unknown:///|)
-  = \point2d(int x, int y)
-  ;
+
+
