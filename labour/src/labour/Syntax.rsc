@@ -10,39 +10,46 @@ module labour::Syntax
  * plugin works accordingly.
  */
 
+/*
+
+    TODO: Check if HoldID can be specified in syntax
+
+*/
+
 lexical Integer = "-"?[0-9]+;
-lexical Natural = [0-9];
+lexical Natural = [0-9]*;
 lexical Identifier = [a-z_]+;
 lexical String = "\""[A-Za-z0-9\-\ ]*"\"";
-lexical Color = [a-z];
-lexical HoldID = "\""[0-9]"\"";
+lexical Color = 'white' | 'yellow' | 'green' | 'blue' | 'red' | 'purple' | 'pink' | 'black' | 'orange';
 
 layout Whitespace = [\ \t\n\r\f]*;
 
+//start syntax BoulderingWall
+//    = "bouldering_wall" String "{" "routes" RouteList "}";
 start syntax BoulderingWall
-    = "bouldering_wall" String "{" "volumes" "," "routes" RouteList "}";
+    = "bouldering_wall" String "{" Volumes "," RouteList "}";
 
-syntax Position
-    = "{" {PositionKeyValue ","}+ "}";
+syntax Position = "pos" Coordinate;
 
-syntax PositionKeyValue
+syntax Coordinate = "{" {CoordKeyValue ","}+ "}";
+syntax CoordKeyValue
     = "x:" Natural
     | "y:" Natural
     | "z:" Natural
     ;
 
-syntax PositionList = "[" {Position ","}+ "]";
-syntax ColorList = "[" {Color ","}+ "]";
-syntax HoldIDList = "[" {HoldID ","}* "]";
+syntax Vertices = "vertices" "[" {Coordinate ","}+ "]";
+syntax ColorList = "colours" "[" {Color ","}+ "]";
+syntax HoldIDList = "holds" "[" {String ","}* "]";
 syntax HoldList = "[" {Hold ","}+ "]";
 syntax Hold
-    = "hold" HoldID "{" {HoldKeyValue ","}* "}";
+    = "hold" String "{" {HoldKeyValue ","}* "}";
 
 syntax HoldKeyValue
-    = "pos" Position
-    | "shape:" String
+    = "shape:" String
+    | Position
     | "rotation:" Natural
-    | "colours" ColorList
+    | ColorList
     | "start_hold:" Natural
     | "end_hold"
     ;
@@ -58,8 +65,8 @@ syntax Circle
     = "circle" "{" {CircleKeyValue ","}* "}";
 
 syntax CircleKeyValue
-    = "pos" Position
-    | "depth:" Integer
+    = "depth:" Integer
+    | Position
     | "radius:" Natural
     ;
 
@@ -67,8 +74,8 @@ syntax Rectangle
     = "rectangle" "{" {RectangleKeyValue ","}* "}";
 
 syntax RectangleKeyValue
-    = "pos" Position
-    | "depth:" Integer
+    = "depth:" Integer
+    | Position
     | "width:" Natural
     | "height:" Natural
     | "holds" HoldList
@@ -78,21 +85,28 @@ syntax Polygon
     = "polygon" "{" {PolygonKeyValue ","}* "}";
 
 syntax PolygonKeyValue
-    = "pos" Position
-    | "faces" FaceList;
+    = Position
+    | FaceList;
 
-syntax FaceList = "[" {Face ","}+ "]";
+syntax FaceList = "faces" "[" {Face ","}+ "]";
 syntax Face
     = "face" "{" {FaceKeyValue ","}* "}";
 syntax FaceKeyValue
-    = "vertices" PositionList
+    = Vertices
     | "holds" HoldList
     ; 
 
-syntax RouteList = "[" {Route ","}* "]";
-syntax Route = "bouldering_route" String "{" {RouteKeyValue ","}*"}";
+
+syntax RouteList = "routes" "[" Route {"," Route}* "]";
+syntax Route = "bouldering_route" String "{" RouteKeyValueList "}";
+syntax RouteKeyValueList = RouteKeyValue ("," RouteKeyValue)*;
+
+
+//syntax Route = "bouldering_route" String "{" {RouteKeyValue ","}*"}";
 syntax RouteKeyValue
     = "grade:" String
-    | "grid_base_points" Position
-    | "holds" HoldIDList
+    | GridBasePoint
+    | HoldIDList
     ;
+
+syntax GridBasePoint = "grid_base_point" Coordinate;
