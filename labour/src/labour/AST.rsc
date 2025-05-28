@@ -6,10 +6,12 @@ module labour::AST
  */
 
 data BoulderingWall
- = \boulderingwall(str name, list[Volume] volumes)
+ = \boulderingwall(str name, list[Volume] volumes, list[Route] routes)
  ;
 
 data Volume = \volume();
+
+data Route = \route();
 
 
 
