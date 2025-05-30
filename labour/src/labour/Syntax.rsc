@@ -10,9 +10,9 @@ module labour::Syntax
  * plugin works accordingly.
  */
 
-lexical Integer = "-"?[0-9]+;
+lexical Integer = "-"? Natural;
 lexical Natural = [0-9] | [1-9][0-9]*;
-lexical Identifier = [a-z_]+;
+lexical HoldIdentifier = "\""[0-9][0-9][0-9][0-9]"\"";
 lexical String = "\""[A-Za-z0-9\-\ ]*"\"";
 lexical Color = 'white' | 'yellow' | 'green' | 'blue' | 'red' | 'purple' | 'pink' | 'black' | 'orange';
 
@@ -60,7 +60,7 @@ syntax PolygonKeyValue
 
 syntax Position = "pos" Coordinate;
 
-syntax HoldIDList = "holds" "[" {String ","}* "]";
+syntax HoldIDList = "holds" "[" {HoldIdentifier ","}* "]";
 
 syntax GridBasePoint = "grid_base_point" Coordinate;
 
@@ -82,7 +82,7 @@ syntax Vertices = "vertices" "[" {Coordinate ","}* "]";
 syntax ColorList = "colours" "[" {Color ","}* "]";
 
 syntax HoldList = "[" {Hold ","}+ "]";
-syntax Hold = "hold" String "{" {HoldKeyValue ","}* "}";
+syntax Hold = "hold" HoldIdentifier "{" {HoldKeyValue ","}* "}";
 syntax HoldKeyValue
     = Position
     | "shape:" String
