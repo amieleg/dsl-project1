@@ -17,3 +17,8 @@ import labour::Syntax;
 start[BoulderingWall] parseStr(str string) {
     return parse(#start[BoulderingWall], string);
 }
+/*
+start[Face] parseStr2(str string) {
+    return parse(#start[Face], string);
+}*/
+

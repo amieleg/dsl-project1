@@ -11,7 +11,7 @@ module labour::Syntax
  */
 
 lexical Integer = "-"? Natural;
-lexical Natural = [0-9] | [1-9][0-9]*;
+lexical Natural = "0" | [1-9][0-9]*;
 lexical HoldIdentifier = "\""[0-9][0-9][0-9][0-9]"\"";
 lexical String = "\""[A-Za-z0-9\-\ ]*"\"";
 lexical Color = 'white' | 'yellow' | 'green' | 'blue' | 'red' | 'purple' | 'pink' | 'black' | 'orange';
