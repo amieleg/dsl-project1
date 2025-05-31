@@ -24,7 +24,7 @@ BoulderingWall loadBoulderingWall((start[BoulderingWall])`bouldering_wall <Strin
 
 Volume loadVolume((Volume)`polygon {<{PolygonKeyValue ","}* keyValues>}`){
     Maybe[Coordinate2D] poly_pos = nothing();
-    list[Face] poly_faces;
+    list[Face] poly_faces = [];
 
     for (val <- keyValues) {
         switch (val){
