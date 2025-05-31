@@ -41,6 +41,7 @@ syntax CircleKeyValue
     = Position
     | "depth:" Integer
     | "radius:" Natural
+    | "holds" HoldList
     ;
 
 syntax Rectangle = "rectangle" "{" {RectangleKeyValue ","}* "}";

@@ -6,7 +6,7 @@ data BoulderingWall
  ;
 
 data Volume
-    = \circle(int depth,  Coordinate2D pos, int radius )
+    = \circle(int depth,  Coordinate2D pos, int radius, list[Hold] holds)
     | \polygon(Coordinate2D pos, list[Face] face_list)
     | \rectangle(int depth, Coordinate2D pos, int width, int height, list[Hold] holds)
     ;
