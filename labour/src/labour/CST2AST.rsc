@@ -142,6 +142,7 @@ Route loadRoute((Route)`bouldering_route <String name> {<{RouteKeyValue ","}* ke
     Coordinate2D route_gridBasePoint;
 
     list[str] route_holdIDList = [];
+
     for (val <- keyValues) {
         switch (val) {
             case (RouteKeyValue)`grade: <String s>`: {
@@ -207,14 +208,11 @@ Coordinate3D loadCoordinate3D((Coordinate) `{ <{CoordKeyValue ","}* keyValues> }
         }
     }
 
-    switch (<x, y, z>) {
-        case <just(n), just(m), just(l)>: {
-            return coordinate3d(n, m, l);
-        }
-        default: {
-            throw labourError("Coordinate should contain x, y and z");
-        }
+    if (x == nothing() || y == nothing() || z == nothing()) {
+        throw labourError("Coordinate should contain x, y and z");
     }
+
+    return coordinate3d(x.val, y.val, z.val);
 }
 
 Coordinate2D loadCoordinate2D((Coordinate) `{ <{CoordKeyValue ","}* keyValues> }`) {
@@ -238,14 +236,11 @@ Coordinate2D loadCoordinate2D((Coordinate) `{ <{CoordKeyValue ","}* keyValues> }
         }
     }
 
-    switch (<x, y>) {
-        case <just(n), just(m)>: {
-            return coordinate2d(n, m);
-        }
-        default: {
-            throw labourError("Coordinate should contain both x and y");
-        }
+    if (x == nothing() || y == nothing()) {
+        throw labourError("Coordinate should contain both x and y");
     }
+
+    return coordinate2d(x.val, y.val);
 }
 
 data LabourError = labourError(str description);
