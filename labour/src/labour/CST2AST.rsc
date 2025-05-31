@@ -6,6 +6,7 @@ import IO;
 // These provide useful functions such as toInt, keep those in mind.
 import Prelude;
 import String;
+import ParseTree;
 
 import labour::AST;
 import labour::Syntax;
@@ -18,22 +19,18 @@ import util::Maybe;
  * Map lexical nodes to Rascal primitive types (bool, int, str)
  */
 
-BoulderingWall loadBoulderingWall((start[BoulderingWall])`bouldering_wall <String name> { volumes [ <{Volume ","}* volumes> ] ,  routes [ <{Route ","}* routes> ] }`)
+BoulderingWall loadBoulderingWall((start[BoulderingWall])`bouldering_wall <String name> { volumes [<{Volume ","}* volumes>], routes [<{Route ","}* routes>] }`)
  = \boulderingwall("<name>"[1..-1], [loadVolume(volume) | volume <- volumes], [loadRoute(route) | route <- routes]);
 
-//Volume loadVolume((Volume)`<Circle c>`) = loadCircle(c);
-//Volume loadVolume((Volume)`<Rectangle r>`) = loadRectangle(r);
-//Volume loadVolume((Volume)`<Polygon p>`) = loadPolygon(p);
-
-Volume loadVolume((Volume)`polygon  {<{PolygonKeyValue ","}* keyValues>}`){
-    Coordinate poly_pos;
+Volume loadVolume((Volume)`polygon {<{PolygonKeyValue ","}* keyValues>}`){
+    Coordinate2D poly_pos;
     list[Face] poly_faces;
 
     for (val <- keyValues) {
         switch (val){
             case(PolygonKeyValue)`faces [<{Face ","}* faces>]`:
                 poly_faces = [loadFace(face) | face <- faces];
-           case(PolygonKeyValue)`<Position pos>`:
+            case(PolygonKeyValue)`<Position pos>`:
                 poly_pos = loadPosition(pos);
             default:
                 println("naur");
@@ -44,7 +41,7 @@ Volume loadVolume((Volume)`polygon  {<{PolygonKeyValue ","}* keyValues>}`){
 }
 
 Face loadFace((Face)`face {<{FaceKeyValue ","}* keyValues>}`){
-    list[Coordinate] face_vertices;
+    list[Coordinate3D] face_vertices = [];
     list[Hold] face_holds = [];
 
     for (val <- keyValues) {
@@ -52,7 +49,7 @@ Face loadFace((Face)`face {<{FaceKeyValue ","}* keyValues>}`){
             case(FaceKeyValue)`holds [<{Hold ","}+ holds>]`:
                 face_holds = [loadHold(hold) | hold <- holds];
             case(FaceKeyValue)`vertices [<{Coordinate ","}* coords> ]`:
-                face_vertices = [loadCoordinate(coord) | coord <- coords];
+                face_vertices = [loadCoordinate3D(coord) | coord <- coords];
             default:
                 println("naur");
         }
@@ -63,7 +60,7 @@ Face loadFace((Face)`face {<{FaceKeyValue ","}* keyValues>}`){
 
 Hold loadHold((Hold)`hold <HoldIdentifier holdId> {<{HoldKeyValue ","}* keyValues>}`){
     str hold_shape;
-    Coordinate hold_pos;
+    Coordinate2D hold_pos;
     int hold_rotation = 0;
     list[str] hold_color_list;
     Maybe[int] hold_start_hold = nothing();
@@ -94,7 +91,7 @@ Hold loadHold((Hold)`hold <HoldIdentifier holdId> {<{HoldKeyValue ","}* keyValue
 Volume loadVolume((Volume)`circle {<{CircleKeyValue ","}* keyValues>}`){
     int circle_depth;
     int circle_radius;
-    Coordinate circle_pos;
+    Coordinate2D circle_pos;
 
     for (val <- keyValues) {
         switch (val) {
@@ -113,7 +110,7 @@ Volume loadVolume((Volume)`circle {<{CircleKeyValue ","}* keyValues>}`){
 }
 
 Volume loadVolume((Volume)`rectangle {<{RectangleKeyValue ","}* keyValues>}`){
-    Position rect_pos;
+    Coordinate2D rect_pos;
     int rect_depth;
     int rect_width;
     int rect_height;
@@ -142,7 +139,7 @@ Volume loadVolume((Volume)`rectangle {<{RectangleKeyValue ","}* keyValues>}`){
 
 Route loadRoute((Route)`bouldering_route <String name> {<{RouteKeyValue ","}* keyValues>}`) {
     str route_grade;
-    Coordinate route_gridBasePoint;
+    Coordinate2D route_gridBasePoint;
     list[str] route_holdIDList = [];
     for (val <- keyValues) {
         switch (val) {
@@ -152,7 +149,7 @@ Route loadRoute((Route)`bouldering_route <String name> {<{RouteKeyValue ","}* ke
             case (RouteKeyValue)`<GridBasePoint gridBasePoint>`: {
                 switch (gridBasePoint){
                     case (GridBasePoint)`grid_base_point <Coordinate c>`:
-                        route_gridBasePoint = loadCoordinate(c);
+                        route_gridBasePoint = loadCoordinate2D(c);
                     default:
                         println("naur");
                 }
@@ -175,10 +172,35 @@ Route loadRoute((Route)`bouldering_route <String name> {<{RouteKeyValue ","}* ke
     return route("<name>"[1..-1], route_grade, route_gridBasePoint, route_holdIDList);
 }
 
-Coordinate loadPosition((Position)`pos <Coordinate coord>`) = loadCoordinate(coord);
+Coordinate2D loadPosition(Tree x) {
+    return coordinate2d(0, 0);
+}
 
-Coordinate loadCoordinate((Coordinate)`{ <{CoordKeyValue ","}* keyValues> }`) = \coordinate([loadCoordKeyValue(keyValue) | keyValue <- keyValues]);
+Coordinate3D loadCoordinate3D(Tree x) {
+    return coordinate3d(0, 0, 0);
+}
 
-CoordKeyValue loadCoordKeyValue((CoordKeyValue)`x: <Natural val>`) = \coordKeyValue("x", toInt("<val>"));
-CoordKeyValue loadCoordKeyValue((CoordKeyValue)`y: <Natural val>`) = \coordKeyValue("y", toInt("<val>"));
-CoordKeyValue loadCoordKeyValue((CoordKeyValue)`z: <Natural val>`) = \coordKeyValue("z", toInt("<val>"));
+Coordinate2D loadCoordinate2D((Coordinate) `Coordinate {[<{CoordKeyValue ","}* keyValues>]}`) {
+    Maybe[int] x = nothing();
+    Maybe[int] y = nothing();
+
+    /*
+[<{Volume ","}* volumes>]
+    for (CoordKeyValue kv <- keyValues) {
+        switch(kv) {
+            case (CoordKeyValue) `x:<Natural n>`:
+                println(n);
+                //x = just(toInt(n));
+            case (CoordKeyValue) `y:<Natural n>`:
+                println(n);
+                //y = just(toInt(n));
+        }
+    }
+
+    if (x == nothing() || y == nothing()) {
+        throw IllegalArgument(keyValues);
+    }
+    */
+
+    return coordinate2d(0, 0);
+}

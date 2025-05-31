@@ -1,38 +1,23 @@
 module labour::AST
 import util::Maybe;
 
-import util::Maybe;
-
-/*
- * Define the Abstract Syntax for LaBouR
- * - Hint: make sure there is an almost one-to-one correspondence with the grammar in Syntax.rsc
- */
-
 data BoulderingWall
  = \boulderingwall(str name, list[Volume] volumes, list[Route] routes)
  ;
 
 data Volume
-    = \circle(int depth,  Coordinate pos, int radius )
-    | \polygon(Coordinate pos, list[Face] face_list)
-    | \rectangle(int depth, Coordinate pos, int width, int height, list[Hold] holds)
+    = \circle(int depth,  Coordinate2D pos, int radius )
+    | \polygon(Coordinate2D pos, list[Face] face_list)
+    | \rectangle(int depth, Coordinate2D pos, int width, int height, list[Hold] holds)
     ;
 
-data Face = \face(list[Coordinate] vertices, list[Hold] holds);
+data Face = \face(list[Coordinate3D] vertices, list[Hold] holds);
 
-data Hold = \hold(str holdid, str shape, Coordinate pos, int rotation, list[str] color_list, Maybe[int] start_hold, bool end_hold);
-
-data Route = \route(str name, str grade, Coordinate gris_base_point, list[str] hold_id_list);
-
-data Coordinate = \coordinate(list[CoordKeyValue] vals);
-
-data CoordKeyValue = \coordKeyValue(str dimension, int val);
-
-data Rectangle = \rectangle(str id, int depth, Coordinate2D pos, int width, int height, list[Hold] holds);
-
-data Hold = \hold(str shape, Coordinate2D pos, int rotation, list[str] color_list, Maybe[int] start_hold, bool end_hold);
+data Hold = \hold(str id, str shape, Coordinate2D pos, Maybe[int] rotation, list[str] color_list, Maybe[int] start_hold, bool end_hold);
 
 data Route = \route(str name, str grade, Coordinate2D grid_base_point, list[str] hold_id_list);
 
-data Coordinate2D = \coordinate(int x, int y);
-data Coordinate3D = \coordinate(int x, int y, int z);
+data Rectangle = \rectangle(str id, int depth, Coordinate2D pos, int width, int height, list[Hold] holds);
+
+data Coordinate2D = \coordinate2d(int x, int y);
+data Coordinate3D = \coordinate3d(int x, int y, int z);
