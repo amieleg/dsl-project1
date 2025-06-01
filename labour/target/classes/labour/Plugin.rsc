@@ -1,5 +1,6 @@
 module labour::Plugin
 
+import lang::rascal::errors::Parse; 
 import IO;
 
 import util::Reflective;
@@ -19,13 +20,24 @@ import labour::Check;
 bool checkWellformedness(loc fil) {
   // Parsing
   try {
+    // Try to parse
     &T resource = parseLaBouR(fil);
-    // Transform the parse tree into an abstract syntax tree
+    // Transform the parse tree into an abstract syntax tree. Throws error if some value is missing
     &T ast = loadBoulderingWall(resource);
-    // Check the well-formedness of the program
+    // Check the well-formedness of the program. Returns false if any check fails
     return checkBoulderWallConfiguration(ast);
-  } catch ParseError: {
+  } catch ParseError(_): {
+    // If parsing fails, the file is not well-formed
     return false;
+  } catch Ambiguity(_, _, _): {
+    // If parsing fails, the file is not well-formed
+    return false;
+  } catch labourError(_): {
+    // If converting to AST fails, the file is not well-formed
+    return false;
+  } catch value otherError: {
+    // If there is another error, there is most likely a bug so we just re-throw
+    throw otherError;
   }
 }
 

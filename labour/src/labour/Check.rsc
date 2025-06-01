@@ -18,13 +18,11 @@ bool checkBoulderWallConfiguration(BoulderingWall wall){
   tuple[str, Hold] convert(Hold h) { return <h.id, h>; };
   map[str, Hold] holds_map = toMapUnique(mapper(holds, convert));
 
-// Assuming 'wall' and 'holds_map' are defined in this scope
-
   return (
     checkVolumeAndRoute(wall) &&
     checkNumberOfHolds(wall) &&
     checkStartingHoldsTotalLimit(wall, holds_map) &&
-    checkUniqueEndHold(wall) &&
+    checkUniqueEndHold(wall, holds_map) &&
     rotationInBounds(wall) &&
     checkFaces(wall) &&
     sameColourHolds(wall, holds_map)
@@ -43,7 +41,15 @@ bool checkNumberOfHolds(BoulderingWall wall) {
 
 // 3. Every route must have between zero and two hand start holds.
 bool checkStartingHoldsTotalLimit(BoulderingWall wall, map[str, Hold] holds) {
-  return isEmpty([size([holds[hold_id].start_hold != nothing()  | hold_id <- route.hold_id_list]) > 2 | route <- wall.routes]);
+  for (r <- wall.routes) {
+    list[Hold] start_holds = [holds[hold_id] | hold_id <- r.hold_id_list, holds[hold_id].start_hold != nothing()];
+    
+    if (size(start_holds) > 2) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 bool hasUniqueEndHold(list[Hold] holds) {
@@ -52,13 +58,15 @@ bool hasUniqueEndHold(list[Hold] holds) {
 
 // 6. Every route has at most one hold indicated as end_hold.
 bool checkUniqueEndHold(BoulderingWall wall, map[str, Hold] holds){
-  return all(Route r <- wall.routes, hasUniqueEndHold(mapper(r.hold_id_list, Hold(str h_id) {return holds[h_id];} )));
+  return all(Route r <- wall.routes, hasUniqueEndHold([holds[h_id] | h_id <- r.hold_id_list]));
 }
 
 // 8. The holds in a bouldering route must all have the same colour, but some holds may be multi-coloured (think of a plexiglas hold with some coloured pieces visible inside), in which case one of these colours has to match the route’s colour. The order of the colours in a multi-coloured hold does not matter.
 bool sameColourHolds(BoulderingWall wall, map[str, Hold] holds) {
   bool sameColour(list[str] holdIds) {
-    set[str] common_colours = ({} | it & toSet(holds[id].color_list) | str id <- holdIds);
+    set[str] initial = toSet(holds[holdIds[0]].color_list);
+    set[str] common_colours = (initial | it & toSet(holds[id].color_list) | str id <- holdIds);
+
     return !isEmpty(common_colours);
   }
 
