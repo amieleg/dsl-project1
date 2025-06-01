@@ -1,0 +1,10 @@
+bouldering_wall "My example wall" {
+    volumes [ ],
+    routes [
+        bouldering_route "Easy route" {
+            grade: "1A",
+            grid_base_point { x: 37, y: 13 },
+            holds ["0202", "0203", "0204", "0002"]
+        }
+    ]
+}
